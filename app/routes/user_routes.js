@@ -1,8 +1,10 @@
 const collectionName = 'users';
+const prefix = '/v1';
 
 module.exports = function(app, db){
-  app.post('/login', (req, res) => {
-    db.collection(collectionName).find({}, { tokenId: req.body.tokenId })
+  app.post(prefix + '/login', (req, res) => {
+    var query = { "tokenId": req.body.tokenId };
+    db.collection(collectionName).find(query)
       .toArray(function (err, result){
       if (err){
         res.send({'error': 'An error has occured'});
@@ -11,7 +13,7 @@ module.exports = function(app, db){
       }
     });
   });
-  app.post('/user', (req, res) => {
+  app.post(prefix + '/user', (req, res) => {
     const user = { tokenId: req.body.tokenId };
     db.collection(collectionName).insert(user, (err, result) => {
       if (err){
@@ -21,7 +23,7 @@ module.exports = function(app, db){
       }
     });
   });
-  app.get('/users', (req, res) =>{
+  app.get(prefix + '/users', (req, res) =>{
     db.collection(collectionName).find({}).toArray(function (err, result){
       if (err){
         res.send({"error": "An error has occurred"})

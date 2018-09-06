@@ -1,9 +1,10 @@
 const collectionName = 'notes';
+const prefix = '/v1';
 
 var ObjectID = require('mongodb').ObjectID;
 
 module.exports = function(app, db){
-  app.get('/notes/all/:id', (req, res) => {
+  app.get(prefix + '/notes/all/:id', (req, res) => {
     var query = { 'userId':req.params.id };
     var projection = { "userId": 0 };
     db.collection(collectionName).find(query)
@@ -16,7 +17,7 @@ module.exports = function(app, db){
       }
     });
   });
-  app.get('/notes/:id', (req, res) => {
+  app.get(prefix + '/notes/:id', (req, res) => {
     const id = req.params.id;
     const details = { '_id': new ObjectID(id) };
     db.collection(collectionName).findOne(details, (err, item) => {
@@ -27,11 +28,12 @@ module.exports = function(app, db){
       }
     })
   });
-  app.post('/notes', (req, res) => {
+  app.post(prefix + '/notes', (req, res) => {
     const note = { 
       title: req.body.title, 
       content: req.body.content, 
-      userId: req.body.userId 
+      userId: req.body.userId,
+      updatedAt: req.body.updatedAt
     };
     db.collection(collectionName).insert(note, (err, result) => {
       if (err){
@@ -41,10 +43,15 @@ module.exports = function(app, db){
       }
     });
   });
-  app.put('/notes/:id', (req ,res) => {
+  app.put(prefix + '/notes/:id', (req ,res) => {
     const id = req.params.id;
     const details = {  '_id': new ObjectID(id) };
-    const note = { title: req.body.title, content: req.body.content, userId: req.body.userId };
+    const note = { 
+      title: req.body.title, 
+      content: req.body.content, 
+      userId: req.body.userId,
+      updatedAt: req.body.updatedAt
+    };
     db.collection(collectionName).update(details, note, (err, result) => {
       if (err){
         res.send({'error':'An error has occured'});
@@ -53,7 +60,7 @@ module.exports = function(app, db){
       }
     });
   });
-  app.delete('/notes/:id', (req, res) => {
+  app.delete(prefix + '/notes/:id', (req, res) => {
     const id = req.params.id;
     const details = { '_id': new ObjectID(id) }
     db.collection(collectionName).remove(details, (err, item) => {
