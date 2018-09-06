@@ -1,9 +1,6 @@
 noute-api
 ====
 
-### Install & Running
+Just for fun!
 
-
-
-### Endpo
 
